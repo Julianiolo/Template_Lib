@@ -32,11 +32,14 @@ endif
 # get current dir
 current_dir :=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-BUILD_MODE_CFLAGS:=
+DEF_FLAGS:=
+
+BUILD_MODE_FLAGS:=
 ifeq ($(BUILD_MODE),DEBUG)
-	BUILD_MODE_CFLAGS += -g
+	BUILD_MODE_FLAGS +=-g
+	DEF_FLAGS += -D_DEBUG
 else
-	BUILD_MODE_CFLAGS +=$(RELEASE_OPTIM)
+	BUILD_MODE_FLAGS +=$(RELEASE_OPTIM)
 endif
 
 MAKE_CMD?=make
@@ -45,7 +48,11 @@ ifeq ($(BUILD_DIR),build/)
 	BUILD_DIR:=$(current_dir)$(BUILD_DIR)
 endif
 
-CDEPFLAGS=-MMD -MF ${@:.o=.d}
+DEP_FLAGS=-MMD -MF ${@:.o=.d}
+
+
+CFLAGS += $(BUILD_MODE_FLAGS)
+CXXFLAGS += $(BUILD_MODE_FLAGS)
 
 # rules:
 

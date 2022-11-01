@@ -4,8 +4,8 @@ BUILD_MODE?=DEBUG
 PLATFORM?=PLATFORM_DESKTOP
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
-    CC?=gcc
-    CXX?=g++
+    CC:=gcc
+    CXX:=g++
 	AR:=ar
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
@@ -41,16 +41,19 @@ endif
 # get current dir
 current_dir :=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-BUILD_MODE_CFLAGS:=
+DEF_FLAGS:=
+
+BUILD_MODE_FLAGS:=
 ifeq ($(BUILD_MODE),DEBUG)
-	BUILD_MODE_CFLAGS += -g
+	BUILD_MODE_FLAGS +=-g
+	DEF_FLAGS += -D_DEBUG
 else
-	BUILD_MODE_CFLAGS +=$(RELEASE_OPTIM)
+	BUILD_MODE_FLAGS +=$(RELEASE_OPTIM)
 endif
 
 MAKE_CMD:=make
 
-CDEPFLAGS=-MMD -MF ${@:.o=.d}
+DEP_FLAGS=-MMD -MF ${@:.o=.d}
 
 OUT_PATH:=$(OUT_DIR)$(OUT_NAME)
 
@@ -68,6 +71,10 @@ DEP_LIBS_DEPS:=dependencies/Makefile $(shell find $(ROOT_DIR)dependencies/ -name
 DEP_INCLUDE_FLAGS:=$(addprefix -I,$(DEPENDENCIES_INCLUDE_PATHS))
 DEP_LIBS_BUILD_DIR:=$(BUILD_DIR)
 
+
+CFLAGS += $(BUILD_MODE_FLAGS)
+CXXFLAGS += $(BUILD_MODE_FLAGS)
+
 # rules:
 
 .PHONY:all clean
@@ -80,7 +87,7 @@ $(OUT_PATH): $(DEP_LIBS_BUILD_DIR)depFile.dep $(OBJ_FILES)
 
 $(OBJ_DIR)%.o:%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(CXXSTD) $(BUILD_MODE_CFLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
+	$(CXX) $(CXXFLAGS) $(CXXSTD) $(DEF_FLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(DEP_FLAGS)
 
 -include $(DEP_FILES)
 
