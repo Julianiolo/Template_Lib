@@ -1,2 +1,2 @@
-# Template for a raylib/imgui/imguifd app
+# Template for a c/c++ Library
 
