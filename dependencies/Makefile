@@ -14,9 +14,9 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 	AR:=emar
 endif
 CFLAGS ?=-Wall -Wno-narrowing $(CUSTOM_CFLAGS)
-CPPFLAGS ?=-Wall -Wno-narrowing $(CUSTOM_CPPFLAGS)
+CXXFLAGS ?=-Wall -Wno-narrowing $(CUSTOM_CXXFLAGS)
 CSTD ?=-std=c99
-CPPSTD ?=-std=c++17
+CXXSTD ?=-std=c++17
 RELEASE_OPTIM?= -O2
 
 BUILD_DIR?=build/make/$(PLATFORM)_$(BUILD_MODE)/
